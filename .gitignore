@@ -1,0 +1,10 @@
+
+*.txt
+*.o
+*.mod
+env/
+*.deb
+gmon.out
+*.png
+smoother2d
+smoother
