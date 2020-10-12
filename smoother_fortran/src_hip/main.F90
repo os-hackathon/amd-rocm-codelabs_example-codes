@@ -5,6 +5,7 @@ USE hipfort
 USE hipfort_check
 USE ISO_C_BINDING
 
+
 IMPLICIT NONE
 
   INTEGER, PARAMETER :: nW = 2
@@ -53,7 +54,7 @@ IMPLICIT NONE
     OPEN(UNIT=2, FILE='function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E9.4)') f(i,j)
+        WRITE(2,'(E12.4)') f(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)
@@ -66,7 +67,7 @@ IMPLICIT NONE
       ! Copy f to f_dev
       CALL hipCheck(hipMemcpy(f_dev, c_loc(f), SIZEOF(f), hipMemcpyHostToDevice))
 
-      smoothF = ApplySmoother( f, weights, nW, nX, nY )
+      CALL ApplySmoother_HIP( f_dev, weights_dev, smoothF_dev, nW, nX, nY )
 
       ! Copy smoothF_dev to smoothF
       CALL hipCheck(hipMemcpy(c_loc(smoothF), smoothF_dev, SIZEOF(smoothF), hipMemcpyDeviceToHost))
@@ -79,7 +80,7 @@ IMPLICIT NONE
     OPEN(UNIT=2, FILE='smooth-function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E9.4)') f(i,j)
+        WRITE(2,'(E12.4)') f(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)
