@@ -86,12 +86,12 @@ SUBROUTINE CLIHelp( )
       PRINT*, ' ------------------------------------------------------------------------------- '
 END SUBROUTINE CLIHelp
 
-FUNCTION ApplySmoother( f, weights, nW, nX, nY ) RESULT( smoothF )
+SUBROUTINE ApplySmoother( f, weights, smoothF, nW, nX, nY )
   IMPLICIT NONE
-  REAL(prec) :: f(1:nX,1:nY)
-  REAL(preC) :: weights(-nW:nW,-nW:nW)
-  INTEGER :: nW, nX, nY
-  REAL(prec) :: smoothF(1:nX,1:nY)
+  REAL(prec), INTENT(in) :: f(1:nX,1:nY)
+  REAL(prec), INTENT(in) :: weights(-nW:nW,-nW:nW)
+  INTEGER, INTENT(in) :: nW, nX, nY
+  REAL(prec), INTENT(inout) :: smoothF(1:nX,1:nY)
   ! Local
   INTEGER :: i, j, ii, jj
 
@@ -112,7 +112,7 @@ FUNCTION ApplySmoother( f, weights, nW, nX, nY ) RESULT( smoothF )
       ENDDO
     ENDDO
 
-END FUNCTION ApplySmoother
+END SUBROUTINE ApplySmoother
 
 SUBROUTINE ResetF( f, smoothF, nW, nX, nY )
   IMPLICIT NONE

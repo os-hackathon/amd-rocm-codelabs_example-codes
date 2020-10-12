@@ -43,14 +43,14 @@ IMPLICIT NONE
     OPEN(UNIT=2, FILE='function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E9.4)') f(i,j)
+        WRITE(2,'(E12.4)') f(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)
 
     DO iter = 1, nIter
 
-      smoothF = ApplySmoother( f, weights, nW, nX, nY ) 
+      CALL ApplySmoother( f, weights, smoothF, nW, nX, nY )
       CALL ResetF( f, smoothF, nW, nX, nY )
 
     ENDDO
@@ -59,7 +59,7 @@ IMPLICIT NONE
     OPEN(UNIT=2, FILE='smooth-function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E9.4)') f(i,j)
+        WRITE(2,'(E12.4)') f(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)
