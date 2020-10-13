@@ -61,26 +61,21 @@ IMPLICIT NONE
 
     ! Copy weights to weights_dev
     CALL hipCheck(hipMemcpy(weights_dev, c_loc(weights), SIZEOF(weights), hipMemcpyHostToDevice))
-
+    CALL hipCheck(hipMemcpy(smoothF_dev, c_loc(smoothF), SIZEOF(smoothF), hipMemcpyHostToDevice))
+    CALL hipCheck(hipMemcpy(f_dev, c_loc(f), SIZEOF(f), hipMemcpyHostToDevice))
     DO iter = 1, nIter
 
-      ! Copy f to f_dev
-      CALL hipCheck(hipMemcpy(f_dev, c_loc(f), SIZEOF(f), hipMemcpyHostToDevice))
-
       CALL ApplySmoother_HIP( f_dev, weights_dev, smoothF_dev, nW, nX, nY )
-
-      ! Copy smoothF_dev to smoothF
-      CALL hipCheck(hipMemcpy(c_loc(smoothF), smoothF_dev, SIZEOF(smoothF), hipMemcpyDeviceToHost))
-
-      CALL ResetF( f, smoothF, nW, nX, nY )
+      CALL ResetF_HIP( f_dev, smoothF_dev, nW, nX, nY )
 
     ENDDO
+    CALL hipCheck(hipMemcpy(c_loc(smoothF), smoothF_dev, SIZEOF(smoothF), hipMemcpyDeviceToHost))
 
     ! Write the initial condition to file
     OPEN(UNIT=2, FILE='smooth-function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E12.4)') f(i,j)
+        WRITE(2,'(E12.4)') smoothF(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)

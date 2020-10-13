@@ -33,3 +33,26 @@ extern "C"
     hipLaunchKernelGGL((ApplySmoother_gpu), dim3(gridDimX,gridDimY,1), dim3(threadsPerBlock,threadsPerBlock,1), 0, 0, *f_dev, *weights_dev, *smoothF_dev, nW, nX, nY);
   }
 }
+
+__global__ void ResetF_gpu(real *f_dev, real *smoothF_dev, int nW, int nX, int nY)
+{
+  size_t i = hipThreadIdx_x + hipBlockIdx_x*hipBlockDim_x + nW;
+  size_t j = hipThreadIdx_y + hipBlockIdx_y*hipBlockDim_y + nW;
+  int iel = i + nX*j;
+  if( i >= nW && i < nX-nW && j >= nW && j< nY-nW){
+    f_dev[iel] = smoothF_dev[iel];
+  }
+}
+
+extern "C"
+{
+  void ResetF_HIP(real **f_dev, real **smoothF_dev, int nW, int nX, int nY)
+  {
+    int threadsPerBlock = 16;
+    int gridDimX = (nX-2*nW)/threadsPerBlock + 1;
+    int gridDimY = (nY-2*nW)/threadsPerBlock + 1;
+
+    hipLaunchKernelGGL((ResetF_gpu), dim3(gridDimX,gridDimY,1), dim3(threadsPerBlock,threadsPerBlock,1), 0, 0, *f_dev, *smoothF_dev, nW, nX, nY);
+  }
+}
+

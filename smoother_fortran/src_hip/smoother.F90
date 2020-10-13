@@ -20,6 +20,15 @@ IMPLICIT NONE
     END SUBROUTINE ApplySmoother_HIP
   END INTERFACE
 
+  INTERFACE
+    SUBROUTINE ResetF_HIP(f_dev, smoothF_dev, nW, nX, nY) bind(c,name="ResetF_HIP")
+      USE ISO_C_BINDING
+      IMPLICIT NONE
+      TYPE(c_ptr) :: f_dev, smoothF_dev
+      INTEGER, VALUE :: nW, nX, nY
+    END SUBROUTINE ResetF_HIP
+  END INTERFACE
+
 
 CONTAINS
 

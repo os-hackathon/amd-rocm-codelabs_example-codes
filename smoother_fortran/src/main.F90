@@ -59,7 +59,7 @@ IMPLICIT NONE
     OPEN(UNIT=2, FILE='smooth-function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E12.4)') f(i,j)
+        WRITE(2,'(E12.4)') smoothF(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)
