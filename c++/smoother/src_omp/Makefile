@@ -62,7 +62,7 @@ endif
 
 .PHONY: clean
 
-smoother2d: main.o smoother.o
+smoother: main.o smoother.o
 	$(CCENV) $(CC) $(CFLAGS) $(LFLAGS) *.o -o $@
 
 main.o : main.cpp smoother.o

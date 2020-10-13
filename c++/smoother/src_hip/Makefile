@@ -6,7 +6,7 @@ LFLAGS=-lm
 
 .PHONY: clean
 
-smoother2d: main.o smoother.o
+smoother: main.o smoother.o
 	$(CCENV) $(CC) $(CFLAGS) *.o $(LFLAGS) -o $@
 
 main.o : main.c smoother.o
