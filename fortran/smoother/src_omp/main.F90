@@ -16,6 +16,7 @@ IMPLICIT NONE
     CALL GetCLIConf( nX, nY, nIter )
     
     ALLOCATE( f(1:nX,1:nY), smoothF(1:nX,1:nY), weights(-nW:nW,-nW:nW) )
+    !$omp target enter data map(alloc: f, smoothF, weights)
 
     ! Create gaussian weights
     DO j = -nW, nW
@@ -48,23 +49,23 @@ IMPLICIT NONE
     ENDDO
     CLOSE(UNIT=2)
 
+    !$omp target update to(f, smoothF, weights)
     DO iter = 1, nIter
-
-      smoothF = ApplySmoother( f, weights, nW, nX, nY ) 
+      CALL ApplySmoother( f, weights, smoothF, nW, nX, nY )
       CALL ResetF( f, smoothF, nW, nX, nY )
-
     ENDDO
+    !$omp target update from(smoothF)
 
     ! Write the initial condition to file
     OPEN(UNIT=2, FILE='smooth-function.txt', STATUS='REPLACE', ACTION='WRITE')
     DO j = 1, nY
       DO i = 1, nX
-        WRITE(2,'(E9.4)') f(i,j)
+        WRITE(2,'(E9.4)') smoothF(i,j)
       ENDDO
     ENDDO
     CLOSE(UNIT=2)
 
-
+    !$omp target exit data map(delete: f, smoothF, weights)
     DEALLOCATE( f, smoothF, weights )
 
 
